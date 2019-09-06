@@ -1,0 +1,381 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="blog.blog.com.mapper.articleMapper">
+  <resultMap id="BaseResultMap" type="blog.blog.com.entity.Article">
+    <id column=" article_id" jdbcType="INTEGER" property="articleId" />
+    <result column=" article_title" jdbcType="VARCHAR" property="articleTitle" />
+    <result column=" article_view_count" jdbcType="INTEGER" property="articleViewCount" />
+    <result column=" article_comment_count" jdbcType="INTEGER" property="articleCommentCount" />
+    <result column=" article_like_count" jdbcType="INTEGER" property="articleLikeCount" />
+    <result column=" article_status" jdbcType="INTEGER" property="articleStatus" />
+    <result column=" article_create_time" jdbcType="TIMESTAMP" property="articleCreateTime" />
+    <result column=" article_update_time" jdbcType="TIMESTAMP" property="articleUpdateTime" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="blog.blog.com.entity.Article">
+    <result column=" article_content" jdbcType="LONGVARCHAR" property="articleContent" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    article_id, article_title, article_give_count,article_view_count, article_comment_count,
+    article_like_count, article_status,  article_create_time, article_update_time,article_img
+  </sql>
+  <sql id="Blob_Column_List">
+    article_content
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultType="blog.blog.com.entity.Article">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from article
+    where article_id = #{articleId,jdbcType=INTEGER}
+  </select>
+
+
+  <select id="selectAll" resultType="blog.blog.com.entity.Article" >
+    select
+     article_id, article_title, article_give_count,article_view_count, article_comment_count,
+    article_like_count, article_status,  article_create_time, article_update_time, article_content,article_img
+    from
+    article  order  by article_update_time desc
+
+  </select>
+  <select id="selectArticlesByid" parameterType="java.lang.Integer" resultType="blog.blog.com.entity.Article">
+        select article_id, article_title, article_give_count,article_view_count, article_comment_count,
+    article_like_count, article_status,  article_create_time, article_update_time, article_content,article_img
+    from
+
+    article
+    where  article_id in
+    <foreach collection="list" open="(" close=")"  item="id" separator=",">
+      #{id}
+
+    </foreach>
+
+
+  </select>
+
+  <select id="selectByViewCountAndTitle" parameterType="blog.blog.com.entity.Article" resultType="blog.blog.com.entity.Article">
+        select  article_id, article_title, article_give_count,article_view_count, article_comment_count,
+    article_like_count, article_status,  article_create_time, article_update_time, article_content,article_img
+
+    from   article
+    where
+    article_status = #{articleStatus}
+    <if test="articleTitle!= null">
+      and article_title like '%${articleTitle}%'
+    </if>
+        order  by article_view_count desc
+  </select>
+
+
+
+
+
+
+  <select id="selectByCommentCountAndTitle" parameterType="blog.blog.com.entity.Article" resultType="blog.blog.com.entity.Article">
+    select  article_id, article_title, article_give_count,article_view_count, article_comment_count,
+    article_like_count, article_status,  article_create_time, article_update_time, article_content,article_img
+
+    from   article
+    where
+    article_status = #{articleStatus}
+    <if test="articleTitle!= null">
+      and article_title like '%${articleTitle}%'
+    </if>
+    order  by article_comment_count desc
+  </select>
+
+  <select id="selectByLikeCountAndTitle" parameterType="blog.blog.com.entity.Article" resultType="blog.blog.com.entity.Article">
+    select  article_id, article_title, article_give_count,article_view_count, article_comment_count,
+    article_like_count, article_status,  article_create_time, article_update_time, article_content,article_img
+
+    from   article
+    where
+    article_status = #{articleStatus}
+    <if test="articleTitle!= null">
+      and article_title like '%${articleTitle}%'
+    </if>
+    order  by article_like_count desc
+  </select>
+
+  <select id="selectByGiveCountAndTitle" parameterType="blog.blog.com.entity.Article" resultType="blog.blog.com.entity.Article">
+    select  article_id, article_title, article_give_count,article_view_count, article_comment_count,
+    article_like_count, article_status,  article_create_time, article_update_time, article_content,article_img
+
+    from   article
+    where
+    article_status = #{articleStatus}
+    <if test="articleTitle!= null">
+      and article_title like '%${articleTitle}%'
+    </if>
+    order  by article_give_count desc
+  </select>
+
+
+
+  <select id="selectAllAndContent" parameterType="java.lang.String" resultType="blog.blog.com.entity.Article">
+     select
+     article_id, article_title, article_give_count,article_view_count, article_comment_count,
+    article_like_count, article_status,  article_create_time, article_update_time, article_content,article_img
+    from
+    article
+    where  article_title like '%${value }%'
+  </select>
+  <select id="selectAllBYArticleStatus" parameterType="blog.blog.com.entity.Article" resultType="blog.blog.com.entity.Article">
+    select
+     article_id, article_title, article_give_count,article_view_count, article_comment_count,
+    article_like_count, article_status,  article_create_time, article_update_time, article_content,article_img
+    from
+    article  where
+
+      article_status = #{articleStatus}
+
+
+    <if test="articleTitle!= null">
+      and article_title like '%${articleTitle}%'
+    </if>
+
+    order  by article_update_time desc
+  </select>
+
+  <select id="selectCountNostate"  parameterType="blog.blog.com.entity.Article" >
+    select  count(*)
+    from  article
+
+
+    <if test="articleTitle!= null">
+      where article_title like '%${articleTitle}%'
+    </if>
+
+  </select>
+
+  <select id="selectCount"  parameterType="blog.blog.com.entity.Article" >
+    select  count(*)
+    from  article  where
+
+    article_status = #{articleStatus}
+    <if test="articleTitle!= null">
+      and article_title like '%${articleTitle}%'
+    </if>
+
+  </select>
+
+  <select id="selectByArticleId">
+     select
+     article_id, article_title, article_give_count,article_view_count, article_comment_count,
+    article_like_count, article_status,  article_create_time, article_update_time, article_content,article_img
+    from
+    article  where article_id
+
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from article
+    where " article_id" = #{articleId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="blog.blog.com.entity.Article" useGeneratedKeys="true"  keyProperty="articleId" keyColumn="article_id" >
+    insert into article (article_id, article_title,article_give_count,article_view_count,
+      article_comment_count,  article_like_count,
+      article_status,  article_create_time, article_update_time,
+      article_content,article_img)
+    values (#{articleId,jdbcType=INTEGER}, #{articleTitle,jdbcType=VARCHAR},#{articleGiveCount},#{articleViewCount,jdbcType=INTEGER},
+      #{articleCommentCount,jdbcType=INTEGER}, #{articleLikeCount,jdbcType=INTEGER}, 
+      #{articleStatus,jdbcType=INTEGER}, #{articleCreateTime,jdbcType=TIMESTAMP}, #{articleUpdateTime,jdbcType=TIMESTAMP}, 
+      #{articleContent,jdbcType=LONGVARCHAR},#{articleImg})
+  </insert>
+  <insert id="insertSelective" parameterType="blog.blog.com.entity.Article">
+    insert into article
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="articleId != null">
+        " article_id",
+      </if>
+      <if test="articleTitle != null">
+        " article_title",
+      </if>
+
+      <if test="articleTitle != null">
+        " article_give_count",
+      </if>
+
+      <if test="articleViewCount != null">
+        " article_view_count",
+      </if>
+      <if test="articleCommentCount != null">
+        " article_comment_count",
+      </if>
+      <if test="articleLikeCount != null">
+        " article_like_count",
+      </if>
+      <if test="articleStatus != null">
+        " article_status",
+      </if>
+      <if test="articleCreateTime != null">
+        " article_create_time",
+      </if>
+      <if test="articleUpdateTime != null">
+        " article_update_time",
+      </if>
+      <if test="articleContent != null">
+        " article_content",
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="articleId != null">
+        #{articleId,jdbcType=INTEGER},
+      </if>
+      <if test="articleTitle != null">
+        #{articleTitle,jdbcType=VARCHAR},
+      </if>
+
+      <if test="articleTitle != null">
+        #{articleGiveCount}
+      </if>
+      <if test="articleViewCount != null">
+        #{articleViewCount,jdbcType=INTEGER},
+      </if>
+      <if test="articleCommentCount != null">
+        #{articleCommentCount,jdbcType=INTEGER},
+      </if>
+      <if test="articleLikeCount != null">
+        #{articleLikeCount,jdbcType=INTEGER},
+      </if>
+      <if test="articleStatus != null">
+        #{articleStatus,jdbcType=INTEGER},
+      </if>
+      <if test="articleCreateTime != null">
+        #{articleCreateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="articleUpdateTime != null">
+        #{articleUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="articleContent != null">
+        #{articleContent,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="blog.blog.com.entity.Article">
+    update article
+    <set>
+      <if test="articleTitle != null">
+        article_title = #{articleTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="articleViewCount != null">
+         article_view_count = #{articleViewCount,jdbcType=INTEGER},
+      </if>
+      <if test="articleTitle != null">
+         article_give_count=#{articleGiveCount},
+      </if>
+      <if test="articleCommentCount != null">
+        article_comment_count= #{articleCommentCount,jdbcType=INTEGER},
+      </if>
+      <if test="articleLikeCount != null">
+         article_like_count = #{articleLikeCount,jdbcType=INTEGER},
+      </if>
+      <if test="articleStatus != null">
+        article_status = #{articleStatus,jdbcType=INTEGER},
+      </if>
+      <if test="articleCreateTime != null">
+        article_create_time = #{articleCreateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="articleUpdateTime != null">
+        article_update_time = #{articleUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="articleContent != null">
+        article_content= #{articleContent,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="articleImg != null">
+      article_img=#{articleImg}
+      </if>
+    </set>
+    where article_id= #{articleId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="blog.blog.com.entity.Article">
+    update article
+    set " article_title" = #{articleTitle,jdbcType=VARCHAR},
+      " article_view_count" = #{articleViewCount,jdbcType=INTEGER},
+      " article_comment_count" = #{articleCommentCount,jdbcType=INTEGER},
+      " article_like_count" = #{articleLikeCount,jdbcType=INTEGER},
+      " article_status" = #{articleStatus,jdbcType=INTEGER},
+      " article_create_time" = #{articleCreateTime,jdbcType=TIMESTAMP},
+      " article_update_time" = #{articleUpdateTime,jdbcType=TIMESTAMP},
+      " article_content" = #{articleContent,jdbcType=LONGVARCHAR}
+    where " article_id" = #{articleId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="blog.blog.com.entity.Article">
+    update article
+    set " article_title" = #{articleTitle,jdbcType=VARCHAR},
+      " article_view_count" = #{articleViewCount,jdbcType=INTEGER},
+      " article_comment_count" = #{articleCommentCount,jdbcType=INTEGER},
+      " article_like_count" = #{articleLikeCount,jdbcType=INTEGER},
+      " article_status" = #{articleStatus,jdbcType=INTEGER},
+      " article_create_time" = #{articleCreateTime,jdbcType=TIMESTAMP},
+      " article_update_time" = #{articleUpdateTime,jdbcType=TIMESTAMP}
+    where " article_id" = #{articleId,jdbcType=INTEGER}
+  </update>
+
+    <update id="addCommentCount" parameterType="java.lang.Integer">
+
+        update  article set  article_comment_count=article_comment_count+1 where
+        article_id =#{id}
+
+
+    </update>
+
+  <update id="addCommentLike" parameterType="java.lang.Integer">
+
+        update  article set  article_like_count=article_like_count+1 where
+        article_id =#{id}
+
+
+   </update>
+
+  <update id="reduceCommentLike" parameterType="java.lang.Integer">
+
+        update  article set  article_like_count=article_like_count-1 where
+        article_id =#{id}
+
+
+   </update>
+
+  <update id="addCommentGive" parameterType="java.lang.Integer">
+
+        update  article set  addCommentGive=addCommentGive+1 where
+        article_id =#{id}
+
+
+   </update>
+  <update id="reduceCommentGive" parameterType="java.lang.Integer">
+
+        update  article set  addCommentGive=addCommentGive-1 where
+        article_id =#{id}
+
+
+   </update>
+  <update id="addCommentView" parameterType="java.lang.Integer">
+
+        update  article set  article_view_count=article_view_count+1 where
+        article_id =#{id}
+
+
+   </update>
+
+  <update id="reduceCommentCount" parameterType="java.lang.Integer">
+
+        update  article set  article_comment_count=article_comment_count-1 where
+        article_id =#{id}
+
+
+    </update>
+  <delete id="deleteArticle" parameterType="java.lang.Integer">
+
+    delete  from  article  where  article_id in
+    <foreach collection="array" item="id" open="(" separator="," close=")">
+
+      #{id}
+    </foreach>
+
+
+  </delete>
+
+</mapper>

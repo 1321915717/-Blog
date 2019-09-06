@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="blog.blog.com.mapper.commentMapper">
+  <resultMap id="BaseResultMap" type="blog.blog.com.entity.Comment">
+    <id column="comment_id" jdbcType="INTEGER" property="commentId" />
+    <result column="comment_cname" jdbcType="VARCHAR" property="commentCname" />
+    <result column="comment_article_id" jdbcType="INTEGER" property="commentArticleId" />
+    <result column="comment_content" jdbcType="VARCHAR" property="commentContent" />
+    <result column="comment_time" jdbcType="TIMESTAMP" property="commentTime" />
+  </resultMap>
+
+  <resultMap id="CommentAndName" type="blog.blog.com.entity.Comment">
+    <id column="comment_id" jdbcType="INTEGER" property="commentId" />
+    <result column="comment_cname" jdbcType="VARCHAR" property="commentCname" />
+    <result column="comment_article_id" jdbcType="INTEGER" property="commentArticleId" />
+    <result column="comment_content" jdbcType="VARCHAR" property="commentContent" />
+    <result column="comment_time" jdbcType="TIMESTAMP" property="commentTime" />
+    <result column="comment_uid" jdbcType="TIMESTAMP" property="commentUid" />
+    <association property="wechatUser" javaType="blog.blog.com.entity.WechatUser">
+      <id column="user_id" jdbcType="INTEGER" property="userId"></id>
+      <result column="user_name" jdbcType="VARCHAR" property="userName"></result>
+      <result column="user_img" jdbcType="VARCHAR" property="userImg"></result>
+
+    </association>
+  </resultMap>
+
+    <select id="selectCommentAndUserName" parameterType="java.lang.Integer" resultMap="CommentAndName">
+    SELECT comment.comment_id,comment.comment_content,comment.comment_time
+,comment.comment_uid,wechat_user.user_img, wechat_user.user_name from comment INNER JOIN wechat_user
+on comment.comment_uid=wechat_user.user_id WHERE comment_article_id=#{id}
+
+    </select>
+
+
+
+  <sql id="Base_Column_List">
+    comment_id, comment_uid, comment_article_id, comment_content, comment_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from comment
+    where comment_id = #{commentId,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultType="blog.blog.com.entity.Comment">
+        select  <include refid="Base_Column_List"/>
+        from  comment
+
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from comment
+    where comment_id = #{commentId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="blog.blog.com.entity.Comment" useGeneratedKeys="true" keyColumn="comment_id" keyProperty="commentId">
+    insert into comment (comment_id, comment_uid, comment_article_id,
+      comment_content, comment_time)
+    values (#{commentId,jdbcType=INTEGER}, #{commentUid}, #{commentArticleId,jdbcType=INTEGER},
+      #{commentContent,jdbcType=VARCHAR}, #{commentTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="blog.blog.com.entity.Comment">
+    insert into comment
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="commentId != null">
+        comment_id,
+      </if>
+      <if test="commentCname != null">
+        comment_uid,
+      </if>
+      <if test="commentArticleId != null">
+        comment_article_id,
+      </if>
+      <if test="commentContent != null">
+        comment_content,
+      </if>
+      <if test="commentTime != null">
+        comment_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="commentId != null">
+        #{commentId,jdbcType=INTEGER},
+      </if>
+      <if test="commentCname != null">
+        #{commentUid},
+      </if>
+      <if test="commentArticleId != null">
+        #{commentArticleId,jdbcType=INTEGER},
+      </if>
+      <if test="commentContent != null">
+        #{commentContent,jdbcType=VARCHAR},
+      </if>
+      <if test="commentTime != null">
+        #{commentTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="blog.blog.com.entity.Comment">
+    update comment
+    <set>
+      <if test="commentCname != null">
+        comment_cname = #{commentUid},
+      </if>
+      <if test="commentArticleId != null">
+        comment_article_id = #{commentArticleId,jdbcType=INTEGER},
+      </if>
+      <if test="commentContent != null">
+        comment_content = #{commentContent,jdbcType=VARCHAR},
+      </if>
+      <if test="commentTime != null">
+        comment_time = #{commentTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where comment_id = #{commentId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="blog.blog.com.entity.Comment">
+    update comment
+    set comment_cname = #{commentUid},
+      comment_article_id = #{commentArticleId,jdbcType=INTEGER},
+      comment_content = #{commentContent,jdbcType=VARCHAR},
+      comment_time = #{commentTime,jdbcType=TIMESTAMP}
+    where comment_id = #{commentId,jdbcType=INTEGER}
+  </update>
+
+  <delete id="deleteByCommentIds" parameterType="java.lang.Integer">
+        delete  from comment
+        where  comment_id =#{id}
+  </delete>
+  <delete id="deleteByCommentId" parameterType="java.lang.Integer">
+    delete  from comment
+    where  comment_id in
+    <foreach collection="array" item="id" open="(" close=")" separator=",">
+      #{id}
+
+    </foreach>
+
+  </delete>
+</mapper>
