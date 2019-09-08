@@ -89,8 +89,8 @@ public class IndexLoginController {
                 return map;
             }
             System.out.println(code);
-            String wxappid = "wx79ab82f49032ded1";
-            String wxSecret = "a61dc93c1e07956bbad66e3ce00e52ce";
+            String wxappid = "****";
+            String wxSecret = "****";
 
           //  oyBqu4rrv9V9iwhjfjkrEUtxHQGk
             String grant_type = "authorization_code";
